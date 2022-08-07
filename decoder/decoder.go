@@ -20,6 +20,7 @@ func NewDecoder() *Decoder {
 
 func (dec *Decoder) Decode(account *rpc.KeyedAccount) (string, error) {
 	ctx := v8.NewContext(dec.isolate)
+	defer ctx.Close()
 	ctx.RunScript(`
 		function decode(value) {
 			return "decoded_" + value
