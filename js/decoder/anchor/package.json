@@ -1,0 +1,24 @@
+{
+    "name": "data3-decoder-solana-anchor",
+    "version": "1.0.0",
+    "description": "Decoder for Solana Anchor data.",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "/dist"
+    ],
+    "scripts": {
+        "build": "webpack"
+    },
+    "devDependencies": {
+        "install": "^0.13.0",
+        "npm": "^8.16.0",
+        "ts-loader": "^9.3.1",
+        "typescript": "^4.7.4",
+        "webpack": "^5.74.0",
+        "webpack-cli": "^4.10.0"
+    },
+    "dependencies": {
+        "@project-serum/anchor": "^0.25.0"
+    }
+}

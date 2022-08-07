@@ -1,0 +1,1 @@
+export { decodeAccount } from './decoder'
