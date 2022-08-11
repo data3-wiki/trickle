@@ -1,8 +1,9 @@
 package model
 
 import (
-	"gopkg.in/yaml.v3"
 	"io/ioutil"
+
+	"gopkg.in/yaml.v3"
 )
 
 type AccountType struct {

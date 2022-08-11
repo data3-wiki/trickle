@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/dereference-xyz/trickle/decode"
+	"github.com/dereference-xyz/trickle/model"
 	"github.com/dereference-xyz/trickle/node"
 	"github.com/gagliardetto/solana-go/rpc"
 )
@@ -26,7 +27,10 @@ func main() {
 		panic(err)
 	}
 
-	decoder := decode.NewAnchorAccountDecoder(string(decoderCode), string(idlJson), decoderFilePath)
+	_, err = model.FromIDL(idlJson)
+	if err != nil {
+		panic(err)
+	}
 
 	solana := node.NewSolanaNode(rpc.MainNetBeta_RPC)
 	accounts, err := solana.GetProgramAccounts(*programId)
@@ -35,6 +39,7 @@ func main() {
 	}
 
 	dec := decode.NewV8Engine()
+	decoder := decode.NewAnchorAccountDecoder(string(decoderCode), string(idlJson), decoderFilePath)
 	for _, acc := range accounts {
 		fmt.Println(dec.DecodeAccount(decoder, acc))
 	}
