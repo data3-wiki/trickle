@@ -8,7 +8,9 @@ import (
 	"github.com/dereference-xyz/trickle/decode"
 	"github.com/dereference-xyz/trickle/model"
 	"github.com/dereference-xyz/trickle/node"
+	"github.com/dereference-xyz/trickle/store"
 	"github.com/gagliardetto/solana-go/rpc"
+	"gorm.io/driver/sqlite"
 )
 
 func main() {
@@ -27,7 +29,14 @@ func main() {
 		panic(err)
 	}
 
-	_, err = model.FromIDL(idlJson)
+	accountTypes, err := model.FromIDL(idlJson)
+	if err != nil {
+		panic(err)
+	}
+
+	// TODO: Add CLI flag for db path.
+	accountStore, err := store.NewAccountStore(sqlite.Open("./test.db"))
+	err = accountStore.AutoMigrate(accountTypes)
 	if err != nil {
 		panic(err)
 	}
