@@ -30,7 +30,12 @@ func (st *AccountStore) AutoMigrate(accountTypes []*model.AccountType) error {
 	for _, acc := range accountTypes {
 		builder := dynamicstruct.NewStruct()
 		for _, prop := range acc.Properties {
-			builder.AddField(strings.Title(prop.Name), "", "")
+			zeroValue, err := prop.DataType.ZeroValue()
+			if err != nil {
+				return err
+			}
+			// TODO: Add appropriate struct tag.
+			builder.AddField(strings.Title(prop.Name), zeroValue, "")
 		}
 		inst := builder.Build().New()
 		instances = append(instances, &accountInstance{

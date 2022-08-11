@@ -16,12 +16,6 @@ type PropertyType struct {
 	DataType DataType `yaml:"data_type"`
 }
 
-type DataType string
-
-const (
-	Text DataType = "Text"
-)
-
 func FromYamlFile(filepath string) (*AccountType, error) {
 	buf, err := ioutil.ReadFile(filepath)
 	if err != nil {

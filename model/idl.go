@@ -34,20 +34,13 @@ func FromIDL(idlJson []byte) ([]*AccountType, error) {
 	for _, idlAccount := range idl.Accounts {
 		properties := []*PropertyType{}
 		for _, field := range idlAccount.Type.Fields {
-			var dataType string
-			switch t := field.Type.(type) {
-			case string:
-				dataType = t
-			default:
-				bytes, err := json.Marshal(t)
-				if err != nil {
-					return nil, err
-				}
-				dataType = string(bytes)
+			dataType, err := toDataType(field.Type)
+			if err != nil {
+				return nil, err
 			}
 			properties = append(properties, &PropertyType{
 				Name:     field.Name,
-				DataType: DataType(dataType),
+				DataType: dataType,
 			})
 		}
 		accountTypes = append(accountTypes, &AccountType{
@@ -57,4 +50,20 @@ func FromIDL(idlJson []byte) ([]*AccountType, error) {
 	}
 
 	return accountTypes, nil
+}
+
+func toDataType(rawFieldType interface{}) (DataType, error) {
+	var fieldType string
+	switch t := rawFieldType.(type) {
+	case string:
+		fieldType = t
+	default:
+		return Text, nil
+	}
+
+	switch fieldType {
+	// TODO: Support more types.
+	default:
+		return Text, nil
+	}
 }
