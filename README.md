@@ -9,5 +9,5 @@ Trickle is an open source library for blockchain data. It is designed with the f
 ## Usage
 
 ```
-go run main.go -programId=SMPLecH534NA9acpos4G6x7uf3LWbCAwZQE9e8ZekMu -idl ./test/squads_mpl.json
+go run main.go -config ./test/config.yaml
 ```

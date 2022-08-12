@@ -1,0 +1,10 @@
+version: 1
+database:
+  sqlite:
+    file: ./test/test.db
+chains:
+  - solana:
+      node: https://api.mainnet-beta.solana.com
+      programs:
+        - program_id: SMPLecH534NA9acpos4G6x7uf3LWbCAwZQE9e8ZekMu
+          idl: ./test/squads_mpl.json
