@@ -13,9 +13,12 @@ export function decodeAccount(idl: Idl, value: string): DecodedAccount {
     });
 
     // Extract discriminator from account data, use it find account name, then use account name to decode.
-    const buff = Buffer.from(value, "base64")
-    const discriminator = buff.slice(0, ACCOUNT_DISCRIMINATOR_SIZE).toString()
+    const buff = Buffer.from(value, 'base64')
+    const discriminator = buff.subarray(0, ACCOUNT_DISCRIMINATOR_SIZE).toString()
     const accountName = discriminatorToAccountName.get(discriminator)
+    if (accountName === undefined) {
+        throw new Error('Unrecognized discriminator: ' + discriminator)
+    }
     const coder = new BorshAccountsCoder(idl)
     return {
         accountType: accountName,

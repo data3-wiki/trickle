@@ -8,7 +8,8 @@
         "/dist"
     ],
     "scripts": {
-        "build": "webpack"
+        "build": "webpack",
+        "watch": "webpack --watch"
     },
     "devDependencies": {
         "install": "^0.13.0",

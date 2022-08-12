@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/dereference-xyz/trickle/decode"
 	"github.com/dereference-xyz/trickle/model"
@@ -49,7 +50,35 @@ func main() {
 
 	dec := decode.NewV8Engine()
 	decoder := decode.NewAnchorAccountDecoder(string(decoderCode), string(idlJson), decoderFilePath)
+
+	decodedAccounts := []*model.Account{}
+	decodingErrors := []string{}
 	for _, acc := range accounts {
-		fmt.Println(dec.DecodeAccount(decoder, acc))
+		da, err := dec.DecodeAccount(decoder, acc)
+		if err != nil {
+			decodingErrors = append(decodingErrors, err.Error())
+		} else {
+			decodedAccounts = append(decodedAccounts, da)
+		}
 	}
+
+	if len(decodingErrors) > 0 {
+		fmt.Fprintf(
+			os.Stderr,
+			"Errors:\n%s\n%d out of %d succeeded.\n",
+			strings.Join(decodingErrors, "\n"),
+			len(decodedAccounts),
+			len(accounts))
+	}
+
+	if len(decodedAccounts) == 0 {
+		panic("No accounts were decoded.")
+	}
+
+	err = accountStore.Create(decodedAccounts)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("Data loaded successfully.")
 }
