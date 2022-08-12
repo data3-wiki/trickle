@@ -32,7 +32,7 @@ func createDynamicStructs(accountTypes []*model.AccountType) ([]*accountInstance
 	instances := []*accountInstance{}
 	for _, acc := range accountTypes {
 		builder := dynamicstruct.NewStruct()
-		for _, prop := range acc.Properties {
+		for _, prop := range acc.PropertyTypes {
 			zeroValue, err := prop.DataType.ZeroValue()
 			if err != nil {
 				return nil, err
@@ -51,8 +51,8 @@ func createDynamicStructs(accountTypes []*model.AccountType) ([]*accountInstance
 	return instances, nil
 }
 
-func (st *AccountStore) AutoMigrate(accountTypes []*model.AccountType) error {
-	dynamicStructs, err := createDynamicStructs(accountTypes)
+func (st *AccountStore) AutoMigrate(programType *model.ProgramType) error {
+	dynamicStructs, err := createDynamicStructs(programType.AccountTypes)
 	if err != nil {
 		return err
 	}
@@ -79,4 +79,22 @@ func (st *AccountStore) Create(accounts []*model.Account) error {
 		}
 	}
 	return nil
+}
+
+func (st *AccountStore) Read(accountType string, predicates map[string]interface{}) ([]*model.Account, error) {
+	rows := []map[string]interface{}{}
+	result := st.db.Table(accountType).Where(predicates).Find(&rows)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	accounts := []*model.Account{}
+	for _, row := range rows {
+		accounts = append(accounts, &model.Account{
+			Type: accountType,
+			Data: row,
+		})
+	}
+
+	return accounts, nil
 }

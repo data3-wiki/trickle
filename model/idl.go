@@ -23,7 +23,7 @@ type IDLAccountField struct {
 	Type interface{} `json:"type"`
 }
 
-func FromIDL(idlJson []byte) ([]*AccountType, error) {
+func FromIDL(idlJson []byte) (*ProgramType, error) {
 	var idl IDL
 	err := json.Unmarshal(idlJson, &idl)
 	if err != nil {
@@ -44,12 +44,12 @@ func FromIDL(idlJson []byte) ([]*AccountType, error) {
 			})
 		}
 		accountTypes = append(accountTypes, &AccountType{
-			Name:       idlAccount.Name,
-			Properties: properties,
+			Name:          idlAccount.Name,
+			PropertyTypes: properties,
 		})
 	}
 
-	return accountTypes, nil
+	return NewProgramType(accountTypes), nil
 }
 
 func toDataType(rawFieldType interface{}) (DataType, error) {

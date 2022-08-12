@@ -7,8 +7,8 @@ import (
 )
 
 type AccountType struct {
-	Name       string          `yaml:"name"`
-	Properties []*PropertyType `yaml:"properties"`
+	Name          string          `yaml:"name"`
+	PropertyTypes []*PropertyType `yaml:"properties"`
 }
 
 type PropertyType struct {
