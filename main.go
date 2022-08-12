@@ -4,9 +4,9 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/dereference-xyz/trickle/decode"
+	"github.com/dereference-xyz/trickle/load"
 	"github.com/dereference-xyz/trickle/model"
 	"github.com/dereference-xyz/trickle/node"
 	"github.com/dereference-xyz/trickle/store"
@@ -42,40 +42,12 @@ func main() {
 		panic(err)
 	}
 
-	solana := node.NewSolanaNode(rpc.MainNetBeta_RPC)
-	accounts, err := solana.GetProgramAccounts(*programId)
-	if err != nil {
-		panic(err)
-	}
-
-	dec := decode.NewV8Engine()
+	solanaNode := node.NewSolanaNode(rpc.MainNetBeta_RPC)
+	decodeEngine := decode.NewV8Engine()
+	loader := load.NewLoader(solanaNode, decodeEngine, accountStore)
 	decoder := decode.NewAnchorAccountDecoder(string(decoderCode), string(idlJson), decoderFilePath)
 
-	decodedAccounts := []*model.Account{}
-	decodingErrors := []string{}
-	for _, acc := range accounts {
-		da, err := dec.DecodeAccount(decoder, acc)
-		if err != nil {
-			decodingErrors = append(decodingErrors, err.Error())
-		} else {
-			decodedAccounts = append(decodedAccounts, da)
-		}
-	}
-
-	if len(decodingErrors) > 0 {
-		fmt.Fprintf(
-			os.Stderr,
-			"Errors:\n%s\n%d out of %d succeeded.\n",
-			strings.Join(decodingErrors, "\n"),
-			len(decodedAccounts),
-			len(accounts))
-	}
-
-	if len(decodedAccounts) == 0 {
-		panic("No accounts were decoded.")
-	}
-
-	err = accountStore.Create(decodedAccounts)
+	err = loader.Load(decoder, *programId)
 	if err != nil {
 		panic(err)
 	}

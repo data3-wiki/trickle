@@ -37,7 +37,6 @@ func createDynamicStructs(accountTypes []*model.AccountType) ([]*accountInstance
 			if err != nil {
 				return nil, err
 			}
-			// TODO: Add appropriate struct tag.
 			builder.AddField(
 				strings.Title(prop.Name),
 				zeroValue,
