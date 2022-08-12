@@ -26,12 +26,14 @@ func (srv *Service) Router() *gin.Engine {
 	api := router.Group("api")
 	v1 := api.Group("v1")
 	{
+		v1.GET("swagger/spec.json", srv.v1SwaggerSpec)
 		solana := v1.Group("solana")
 		{
 			account := solana.Group("account")
 			account.GET("read/:accountType", srv.v1SolanaAccountRead)
 		}
 	}
+	router.Static("/swagger", "./js/swagger-ui/dist")
 	return router
 }
 
@@ -85,4 +87,8 @@ func (srv *Service) v1SolanaAccountRead(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"accounts": accounts,
 	})
+}
+
+func (srv *Service) v1SwaggerSpec(c *gin.Context) {
+	c.Redirect(http.StatusTemporaryRedirect, "https://petstore3.swagger.io/api/v3/openapi.json")
 }
