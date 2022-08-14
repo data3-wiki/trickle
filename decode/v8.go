@@ -61,17 +61,18 @@ func convertValue(programType *model.ProgramType, val *v8go.Value) (*model.Accou
 			decoded.AccountType)
 	}
 
-	// TODO: Case on PropertyType.
 	for field, value := range decoded.Decoded {
-		switch value.(type) {
-		case string:
-		default:
-			serialized, err := json.Marshal(value)
-			if err != nil {
-				return nil, err
-			}
-			decoded.Decoded[field] = string(serialized)
+		propertyType, exists := accountType.PropertyType(field)
+		if !exists {
+			return nil, fmt.Errorf(
+				"Unsupported property name '%s'. Decoder and schema are out of sync. Probably a bug.",
+				field)
 		}
+		converted, err := convertDecodedValue(propertyType.DataType, value)
+		if err != nil {
+			return nil, err
+		}
+		decoded.Decoded[field] = converted
 	}
 
 	return &model.Account{

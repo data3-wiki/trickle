@@ -39,10 +39,7 @@ func FromIDL(idlJson []byte) (*ProgramType, error) {
 				DataType: toDataType(field.Type),
 			})
 		}
-		accountTypes = append(accountTypes, &AccountType{
-			Name:          idlAccount.Name,
-			PropertyTypes: properties,
-		})
+		accountTypes = append(accountTypes, NewAccountType(idlAccount.Name, properties))
 	}
 
 	return NewProgramType(accountTypes), nil

@@ -124,7 +124,7 @@ func v1SolanaAccountRead(t *testing.T, router *gin.Engine, accountType string, p
 	return getRequest(t, router, fmt.Sprintf("/v1/solana/account/read/%s", accountType), predicates)
 }
 
-func TestBooleanSQLiteSerialization(t *testing.T) {
+func TestLoadAndRead(t *testing.T) {
 	deps := initDeps(t, &Deps{})
 	deps.Finish()
 
@@ -151,7 +151,19 @@ func TestBooleanSQLiteSerialization(t *testing.T) {
 	assert.Equal(t, http.StatusOK, recorder.Code)
 	assert.JSONEq(t, `
 	{
-		"accounts": []
+		"accounts": [
+			{
+				"type": "MsInstruction",
+				"data": {
+					"bump": 254,
+					"data": "{\"data\":[13,116,123,130,126,198,57,34,231,5,189,141,203,224,175,198,146,135,222,101,97,12,194,215,139,91,8,132,248,128,188,150,119,124,10,78,95,150,252,155],\"type\":\"Buffer\"}",
+					"executed": false,
+					"instructionIndex": 1,
+					"keys": "[{\"isSigner\":false,\"isWritable\":true,\"pubkey\":\"LmNinfgGibvjSRHkqx6Xq8atzUCm6CEGwAbH1uZsCHh\"},{\"isSigner\":true,\"isWritable\":true,\"pubkey\":\"LmNinfgGibvjSRHkqx6Xq8atzUCm6CEGwAbH1uZsCHh\"},{\"isSigner\":true,\"isWritable\":true,\"pubkey\":\"DxxjSXtkPk6C6gJ8hF7YpV3MjWKJh3tiMtB4m8DWEFCh\"},{\"isSigner\":false,\"isWritable\":false,\"pubkey\":\"SysvarRent111111111111111111111111111111111\"},{\"isSigner\":false,\"isWritable\":false,\"pubkey\":\"11111111111111111111111111111111\"}]",
+					"programId": "SMPLecH534NA9acpos4G6x7uf3LWbCAwZQE9e8ZekMu"
+				}
+			}
+		]
 	}
 	`, recorder.Body.String())
 }

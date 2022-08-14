@@ -21,8 +21,8 @@ type Driver interface {
 }
 
 type AccountStore struct {
-	db *gorm.DB
-	dr Driver
+	db     *gorm.DB
+	driver Driver
 }
 
 func NewAccountStore(driver Driver) (*AccountStore, error) {
@@ -31,7 +31,8 @@ func NewAccountStore(driver Driver) (*AccountStore, error) {
 		return nil, err
 	}
 	return &AccountStore{
-		db: db,
+		db:     db,
+		driver: driver,
 	}, nil
 }
 
@@ -71,7 +72,11 @@ func (st *AccountStore) AutoMigrate(programType *model.ProgramType) error {
 func (st *AccountStore) Create(accounts []*model.Account) error {
 	rowsByAccountType := make(map[string][]map[string]interface{})
 	for _, acc := range accounts {
-		rowsByAccountType[acc.Type] = append(rowsByAccountType[acc.Type], acc.Data)
+		converted, err := st.serialize(acc.AccountType, acc.Data)
+		if err != nil {
+			return err
+		}
+		rowsByAccountType[acc.Type] = append(rowsByAccountType[acc.Type], converted)
 	}
 	for accountType, rows := range rowsByAccountType {
 		result := st.db.Table(accountType).Create(rows)
@@ -91,12 +96,36 @@ func (st *AccountStore) Read(accountType *model.AccountType, predicates map[stri
 
 	accounts := []*model.Account{}
 	for _, row := range rows {
+		converted, err := st.deserialize(accountType, row)
+		if err != nil {
+			return nil, err
+		}
 		accounts = append(accounts, &model.Account{
 			AccountType: accountType,
 			Type:        accountType.Name,
-			Data:        row,
+			Data:        converted,
 		})
 	}
 
 	return accounts, nil
+}
+
+func (st *AccountStore) serialize(accountType *model.AccountType, row map[string]interface{}) (map[string]interface{}, error) {
+	converted := make(map[string]interface{})
+	for _, propertyType := range accountType.PropertyTypes {
+		if value, ok := row[propertyType.Name]; ok {
+			converted[propertyType.Name] = st.driver.Serialize(propertyType.DataType, value)
+		}
+	}
+	return converted, nil
+}
+
+func (st *AccountStore) deserialize(accountType *model.AccountType, row map[string]interface{}) (map[string]interface{}, error) {
+	converted := make(map[string]interface{})
+	for _, propertyType := range accountType.PropertyTypes {
+		if value, ok := row[propertyType.Name]; ok {
+			converted[propertyType.Name] = st.driver.Deserialize(propertyType.DataType, value)
+		}
+	}
+	return converted, nil
 }

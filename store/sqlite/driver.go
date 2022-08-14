@@ -63,5 +63,11 @@ func (v *deserializeVisitor) VisitReal() interface{} {
 }
 
 func (v *deserializeVisitor) VisitBoolean() interface{} {
-	return v.value
+	// Note the importance of the decimal point --
+	// otherwise the equality might fail because of a type mismatch.
+	if v.value == 0.0 {
+		return false
+	}
+
+	return true
 }
