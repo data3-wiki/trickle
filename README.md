@@ -4,7 +4,7 @@
     <img width="128px" src="https://raw.githubusercontent.com/data3-wiki/static-assets/main/Trickle-Logo.png">
 </div>
 
-Trickle is an open source no-code framework for spinning up web3 data services painlessly. Focus on dApp logic rather than reinventing the blockchain data plumbling wheel.
+Trickle is an open source no-code framework for spinning up web3 data services painlessly. Focus on dApp logic rather than reinventing the blockchain data plumbling wheel. This project is supported by the [Data3 Wiki](https://www.data3.wiki/).
 
 ## Features
 
@@ -13,7 +13,9 @@ Trickle is an open source no-code framework for spinning up web3 data services p
 - **L1 Integrations**: Currently supports pulling data from Solana. Integration with more L1 chains on the roadmap. No need to bother learning to use the different L1 RPC node APIs directly.
 - **Database Integrations**: Currently supports storing data in SQLite. Integrations with other databases on the roadmap.
 
-## Usage
+## Usage (< 5 minutes)
+
+1. Run the service.
 
 ```
 go run main.go -config ./test/config.yaml
@@ -31,9 +33,9 @@ It is designed with the following goals in mind:
 
 - [ ] Data Loading
     - [ ] Solana
-        - [x] Account Data Loading using getProgramAccounts
-        - [ ] Account Data Loading using WebSocket
-        - [ ] Instruction Data Loading
+        - [x] Account data loading using getProgramAccounts
+        - [ ] Account data loading using WebSocket
+        - [ ] Instruction data loading
 - [ ] Data Decoding
     - [ ] Solana
         - [ ] Anchor
