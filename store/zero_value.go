@@ -19,3 +19,7 @@ func (v *zeroValueVisitor) VisitInteger() interface{} {
 func (v *zeroValueVisitor) VisitReal() interface{} {
 	return 0.0
 }
+
+func (v *zeroValueVisitor) VisitBoolean() interface{} {
+	return false
+}

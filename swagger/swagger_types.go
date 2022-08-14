@@ -19,3 +19,7 @@ func (v *swaggerTypeVisitor) VisitInteger() interface{} {
 func (v *swaggerTypeVisitor) VisitReal() interface{} {
 	return "number"
 }
+
+func (v *swaggerTypeVisitor) VisitBoolean() interface{} {
+	return "boolean"
+}
