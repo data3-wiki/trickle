@@ -6,6 +6,7 @@ import (
 
 	"github.com/dereference-xyz/trickle/model"
 	"github.com/dereference-xyz/trickle/store"
+	"github.com/dereference-xyz/trickle/swagger"
 	"github.com/gin-gonic/gin"
 )
 
@@ -90,5 +91,17 @@ func (srv *Service) v1SolanaAccountRead(c *gin.Context) {
 }
 
 func (srv *Service) v1SwaggerSpec(c *gin.Context) {
-	c.Redirect(http.StatusTemporaryRedirect, "https://petstore3.swagger.io/api/v3/openapi.json")
+	spec, err := swagger.Generate(srv.programType)
+	if err != nil {
+		sendErrorResponse(c, err)
+		return
+	}
+
+	serialized, err := spec.MarshalJSON()
+	if err != nil {
+		sendErrorResponse(c, err)
+		return
+	}
+
+	c.Data(http.StatusOK, "application/json", serialized)
 }
