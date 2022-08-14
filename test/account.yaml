@@ -1,4 +1,0 @@
-name: account_name
-properties:
-  - name: property_name
-    data_type: text

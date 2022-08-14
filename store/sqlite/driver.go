@@ -43,7 +43,6 @@ func (v *serializeVisitor) VisitReal() interface{} {
 }
 
 func (v *serializeVisitor) VisitBoolean() interface{} {
-	// TODO
 	return v.value
 }
 
@@ -64,6 +63,5 @@ func (v *deserializeVisitor) VisitReal() interface{} {
 }
 
 func (v *deserializeVisitor) VisitBoolean() interface{} {
-	// TODO
 	return v.value
 }
