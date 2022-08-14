@@ -54,7 +54,7 @@ func generateDefinitions(programType *model.ProgramType) spec.Definitions {
 		for _, propertyType := range accountType.PropertyTypes {
 			properties[propertyType.Name] = spec.Schema{
 				SchemaProps: spec.SchemaProps{
-					Type: []string{string(propertyType.DataType)},
+					Type: []string{swaggerType(propertyType.DataType)},
 				},
 			}
 		}
@@ -108,7 +108,7 @@ func generateParameters(accountType *model.AccountType) []spec.Parameter {
 				Name: propertyType.Name,
 				Schema: &spec.Schema{
 					SchemaProps: spec.SchemaProps{
-						Type: []string{string(propertyType.DataType)},
+						Type: []string{swaggerType(propertyType.DataType)},
 					},
 				},
 				Required: false,

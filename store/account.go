@@ -28,15 +28,12 @@ func NewAccountStore(dialector gorm.Dialector) (*AccountStore, error) {
 	}, nil
 }
 
-func createDynamicStructs(accountTypes []*model.AccountType) ([]*accountInstance, error) {
+func createDynamicStructs(accountTypes []*model.AccountType) []*accountInstance {
 	instances := []*accountInstance{}
 	for _, acc := range accountTypes {
 		builder := dynamicstruct.NewStruct()
 		for _, prop := range acc.PropertyTypes {
-			zeroValue, err := prop.DataType.ZeroValue()
-			if err != nil {
-				return nil, err
-			}
+			zeroValue := zeroValue(prop.DataType)
 			builder.AddField(
 				strings.Title(prop.Name),
 				zeroValue,
@@ -48,14 +45,11 @@ func createDynamicStructs(accountTypes []*model.AccountType) ([]*accountInstance
 			instance: inst,
 		})
 	}
-	return instances, nil
+	return instances
 }
 
 func (st *AccountStore) AutoMigrate(programType *model.ProgramType) error {
-	dynamicStructs, err := createDynamicStructs(programType.AccountTypes)
-	if err != nil {
-		return err
-	}
+	dynamicStructs := createDynamicStructs(programType.AccountTypes)
 
 	for _, inst := range dynamicStructs {
 		err := st.db.Table(inst.name).AutoMigrate(inst.instance)

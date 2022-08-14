@@ -58,12 +58,12 @@ func toDataType(rawFieldType interface{}) (DataType, error) {
 	case string:
 		fieldType = t
 	default:
-		return Text, nil
+		return &TextDataType{}, nil
 	}
 
 	switch fieldType {
 	// TODO: Support more types.
 	default:
-		return Text, nil
+		return &TextDataType{}, nil
 	}
 }
