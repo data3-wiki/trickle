@@ -53,7 +53,7 @@ func main() {
 		panic(err)
 	}
 
-	err = loader.Load(decoder, cfg.Chains[0].Solana.Programs[0].ProgramId)
+	err = loader.Load(programType, decoder, cfg.Chains[0].Solana.Programs[0].ProgramId)
 	if err != nil {
 		panic(err)
 	}

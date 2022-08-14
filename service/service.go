@@ -79,7 +79,7 @@ func (srv *Service) v1SolanaAccountRead(c *gin.Context) {
 		}
 	}
 
-	accounts, err := srv.accountStore.Read(typeName, predicates)
+	accounts, err := srv.accountStore.Read(accountType, predicates)
 	if err != nil {
 		sendErrorResponse(c, err)
 		return

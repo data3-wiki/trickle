@@ -82,9 +82,9 @@ func (st *AccountStore) Create(accounts []*model.Account) error {
 	return nil
 }
 
-func (st *AccountStore) Read(accountType string, predicates map[string]interface{}) ([]*model.Account, error) {
+func (st *AccountStore) Read(accountType *model.AccountType, predicates map[string]interface{}) ([]*model.Account, error) {
 	rows := []map[string]interface{}{}
-	result := st.db.Table(accountType).Where(predicates).Find(&rows)
+	result := st.db.Table(accountType.Name).Where(predicates).Find(&rows)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -92,8 +92,9 @@ func (st *AccountStore) Read(accountType string, predicates map[string]interface
 	accounts := []*model.Account{}
 	for _, row := range rows {
 		accounts = append(accounts, &model.Account{
-			Type: accountType,
-			Data: row,
+			AccountType: accountType,
+			Type:        accountType.Name,
+			Data:        row,
 		})
 	}
 

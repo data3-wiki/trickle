@@ -28,7 +28,7 @@ func NewLoader(
 	}
 }
 
-func (ld *Loader) Load(decoder decode.Decoder, programId string) error {
+func (ld *Loader) Load(programType *model.ProgramType, decoder decode.Decoder, programId string) error {
 	accounts, err := ld.solanaNode.GetProgramAccounts(programId)
 	if err != nil {
 		return err
@@ -37,7 +37,7 @@ func (ld *Loader) Load(decoder decode.Decoder, programId string) error {
 	decodedAccounts := []*model.Account{}
 	decodingErrors := []string{}
 	for _, acc := range accounts {
-		da, err := ld.decodeEngine.DecodeAccount(decoder, acc)
+		da, err := ld.decodeEngine.DecodeAccount(programType, decoder, acc)
 		if err != nil {
 			decodingErrors = append(decodingErrors, err.Error())
 		} else {

@@ -145,7 +145,7 @@ func TestBooleanSQLiteSerialization(t *testing.T) {
 		}
 	]
 	`), nil)
-	require.NoError(t, deps.loader.Load(deps.decoder, dummyProgramId))
+	require.NoError(t, deps.loader.Load(deps.programType, deps.decoder, dummyProgramId))
 
 	recorder := v1SolanaAccountRead(t, deps.router, "MsInstruction", map[string]interface{}{})
 	assert.Equal(t, http.StatusOK, recorder.Code)

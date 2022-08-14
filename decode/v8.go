@@ -26,7 +26,10 @@ func NewV8Engine() *V8Engine {
 	}
 }
 
-func (eng *V8Engine) DecodeAccount(decoder Decoder, account *rpc.KeyedAccount) (*model.Account, error) {
+func (eng *V8Engine) DecodeAccount(
+	programType *model.ProgramType,
+	decoder Decoder,
+	account *rpc.KeyedAccount) (*model.Account, error) {
 	ctx := v8.NewContext(eng.isolate)
 	defer ctx.Close()
 	ctx.RunScript(decoder.Code(), decoder.FilePath())
@@ -36,10 +39,10 @@ func (eng *V8Engine) DecodeAccount(decoder Decoder, account *rpc.KeyedAccount) (
 	if err != nil {
 		return nil, err
 	}
-	return convertValue(val)
+	return convertValue(programType, val)
 }
 
-func convertValue(val *v8go.Value) (*model.Account, error) {
+func convertValue(programType *model.ProgramType, val *v8go.Value) (*model.Account, error) {
 	valJson, err := val.MarshalJSON()
 	if err != nil {
 		return nil, err
@@ -49,6 +52,13 @@ func convertValue(val *v8go.Value) (*model.Account, error) {
 	err = json.Unmarshal(valJson, &decoded)
 	if err != nil {
 		return nil, err
+	}
+
+	accountType, exists := programType.AccountType(decoded.AccountType)
+	if !exists {
+		return nil, fmt.Errorf(
+			"Unsupported account type '%s'. Decoder and schema are out of sync. Probably a bug.",
+			decoded.AccountType)
 	}
 
 	// TODO: Case on PropertyType.
@@ -65,7 +75,8 @@ func convertValue(val *v8go.Value) (*model.Account, error) {
 	}
 
 	return &model.Account{
-		Type: decoded.AccountType,
-		Data: decoded.Decoded,
+		AccountType: accountType,
+		Type:        decoded.AccountType,
+		Data:        decoded.Decoded,
 	}, nil
 }
