@@ -14,12 +14,19 @@ type accountInstance struct {
 	instance interface{}
 }
 
-type AccountStore struct {
-	db *gorm.DB
+type Driver interface {
+	Dialector() gorm.Dialector
+	Serialize(dataType model.DataType, value interface{}) interface{}
+	Deserialize(dataType model.DataType, value interface{}) interface{}
 }
 
-func NewAccountStore(dialector gorm.Dialector) (*AccountStore, error) {
-	db, err := gorm.Open(dialector, &gorm.Config{})
+type AccountStore struct {
+	db *gorm.DB
+	dr Driver
+}
+
+func NewAccountStore(driver Driver) (*AccountStore, error) {
+	db, err := gorm.Open(driver.Dialector(), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}

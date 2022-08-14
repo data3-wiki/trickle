@@ -12,7 +12,7 @@ import (
 	"github.com/dereference-xyz/trickle/node"
 	"github.com/dereference-xyz/trickle/service"
 	"github.com/dereference-xyz/trickle/store"
-	"gorm.io/driver/sqlite"
+	"github.com/dereference-xyz/trickle/store/sqlite"
 )
 
 func main() {
@@ -43,7 +43,7 @@ func main() {
 		panic(err)
 	}
 
-	accountStore, err := store.NewAccountStore(sqlite.Open(cfg.Database.SQLite.File))
+	accountStore, err := store.NewAccountStore(sqlite.NewDriver(cfg.Database.SQLite.File))
 	err = accountStore.AutoMigrate(programType)
 	if err != nil {
 		panic(err)
