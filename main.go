@@ -28,11 +28,6 @@ func main() {
 		panic(err)
 	}
 
-	decoderCode, err := os.ReadFile(config.DecoderFilePath)
-	if err != nil {
-		panic(err)
-	}
-
 	idlJson, err := os.ReadFile(cfg.Chains[0].Solana.Programs[0].IDL)
 	if err != nil {
 		panic(err)
@@ -49,10 +44,14 @@ func main() {
 		panic(err)
 	}
 
-	solanaNode := node.NewSolanaNode(cfg.Chains[0].Solana.Node)
+	solanaNode := node.NewSolanaGo(cfg.Chains[0].Solana.Node)
 	decodeEngine := decode.NewV8Engine()
 	loader := load.NewLoader(solanaNode, decodeEngine, accountStore)
-	decoder := decode.NewAnchorAccountDecoder(string(decoderCode), string(idlJson), config.DecoderFilePath)
+
+	decoder, err := decode.NewAnchorAccountDecoder(config.DecoderFilePath, string(idlJson))
+	if err != nil {
+		panic(err)
+	}
 
 	err = loader.Load(decoder, cfg.Chains[0].Solana.Programs[0].ProgramId)
 	if err != nil {

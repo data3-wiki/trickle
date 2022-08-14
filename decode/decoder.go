@@ -1,6 +1,9 @@
 package decode
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+)
 
 type Decoder interface {
 	Code() string
@@ -13,12 +16,17 @@ type AnchorAccountDecoder struct {
 	filePath string
 }
 
-func NewAnchorAccountDecoder(jsCode string, idlJson string, filePath string) *AnchorAccountDecoder {
-	return &AnchorAccountDecoder{
-		jsCode:   jsCode,
-		idlJson:  idlJson,
-		filePath: filePath,
+func NewAnchorAccountDecoder(decoderFilePath, idlJson string) (*AnchorAccountDecoder, error) {
+	jsCode, err := os.ReadFile(decoderFilePath)
+	if err != nil {
+		return nil, err
 	}
+
+	return &AnchorAccountDecoder{
+		jsCode:   string(jsCode),
+		idlJson:  idlJson,
+		filePath: decoderFilePath,
+	}, nil
 }
 
 func (dec *AnchorAccountDecoder) Code() string {

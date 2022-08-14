@@ -12,13 +12,13 @@ import (
 )
 
 type Loader struct {
-	solanaNode   *node.SolanaNode
+	solanaNode   node.SolanaNode
 	decodeEngine *decode.V8Engine
 	accountStore *store.AccountStore
 }
 
 func NewLoader(
-	solanaNode *node.SolanaNode,
+	solanaNode node.SolanaNode,
 	decodeEngine *decode.V8Engine,
 	accountStore *store.AccountStore) *Loader {
 	return &Loader{

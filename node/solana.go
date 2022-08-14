@@ -7,17 +7,21 @@ import (
 	"github.com/gagliardetto/solana-go/rpc"
 )
 
-type SolanaNode struct {
+type SolanaNode interface {
+	GetProgramAccounts(programId string) (rpc.GetProgramAccountsResult, error)
+}
+
+type SolanaGo struct {
 	client *rpc.Client
 }
 
-func NewSolanaNode(endpoint string) *SolanaNode {
-	return &SolanaNode{
+func NewSolanaGo(endpoint string) *SolanaGo {
+	return &SolanaGo{
 		client: rpc.New(endpoint),
 	}
 }
 
-func (node *SolanaNode) GetProgramAccounts(programId string) (rpc.GetProgramAccountsResult, error) {
+func (node *SolanaGo) GetProgramAccounts(programId string) (rpc.GetProgramAccountsResult, error) {
 	accounts, err := node.client.GetProgramAccounts(
 		context.TODO(),
 		solana.MustPublicKeyFromBase58(programId),
