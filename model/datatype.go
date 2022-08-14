@@ -14,14 +14,14 @@ type TextDataType struct{}
 type IntegerDataType struct{}
 type RealDataType struct{}
 
-func (dt *TextDataType) Accept(visitor DataTypeVisitor) interface{} {
+func (dt TextDataType) Accept(visitor DataTypeVisitor) interface{} {
 	return visitor.VisitText()
 }
 
-func (dt *IntegerDataType) Accept(visitor DataTypeVisitor) interface{} {
+func (dt IntegerDataType) Accept(visitor DataTypeVisitor) interface{} {
 	return visitor.VisitInteger()
 }
 
-func (dt *RealDataType) Accept(visitor DataTypeVisitor) interface{} {
+func (dt RealDataType) Accept(visitor DataTypeVisitor) interface{} {
 	return visitor.VisitReal()
 }
