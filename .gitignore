@@ -22,3 +22,6 @@ go.work
 
 # Test DB
 test/test.db
+
+# Binary directory.
+bin/

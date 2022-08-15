@@ -13,13 +13,31 @@ Trickle is an open source no-code framework for spinning up web3 data services p
 - **Blockchain Integrations**: Currently supports pulling data from Solana. Integration with more blockchains on the roadmap. No need to bother learning to use the different blockchain RPC node APIs directly.
 - **Database Integrations**: Currently supports storing data in SQLite. Integrations with other databases on the roadmap.
 
-## Usage (< 5 minutes)
+## Getting Started
 
-1. Run the service.
+0. Write a configuration file to specify the RPC node url, program id and `idl.json` of the Solana program you want to index. An example config has been provided for you in `test/config.yaml` which is displayed below:
+
+```yaml
+version: 1
+database:
+  sqlite:
+    file: ./test/test.db
+chains:
+  - solana:
+      node: https://api.mainnet-beta.solana.com
+      programs:
+        - program_id: SMPLecH534NA9acpos4G6x7uf3LWbCAwZQE9e8ZekMu
+          idl: ./test/squads_mpl.json
+```
+
+1. Build and run the service with the test config file.
 
 ```
-go run main.go -config ./test/config.yaml
+make
+./bin/trickle -config ./test/config.yaml
 ```
+
+2. The server will load the account data at start up and start serving it afterwards. To see what endpoints are available, you can navigate to the Swagger UI url http://localhost:8080/swagger.
 
 ## Goals
 
