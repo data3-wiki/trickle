@@ -52,11 +52,7 @@ func generateDefinitions(programType *model.ProgramType) spec.Definitions {
 	for _, accountType := range programType.AccountTypes {
 		properties := make(map[string]spec.Schema)
 		for _, propertyType := range accountType.PropertyTypes {
-			properties[propertyType.Name] = spec.Schema{
-				SchemaProps: spec.SchemaProps{
-					Type: []string{swaggerType(propertyType.DataType)},
-				},
-			}
+			properties[propertyType.Name] = *typeOf(swaggerType(propertyType.DataType))
 		}
 		defs[accountType.Name] = spec.Schema{
 			SchemaProps: spec.SchemaProps{
@@ -68,7 +64,7 @@ func generateDefinitions(programType *model.ProgramType) spec.Definitions {
 }
 
 func generateResponse(accountType *model.AccountType) (*spec.Response, error) {
-	accountRef, err := jsonreference.New(fmt.Sprintf("#/definitions/%s", accountType.Name))
+	accountRef, err := refOf(accountType.Name)
 	if err != nil {
 		return nil, err
 	}
@@ -76,25 +72,14 @@ func generateResponse(accountType *model.AccountType) (*spec.Response, error) {
 	return &spec.Response{
 		ResponseProps: spec.ResponseProps{
 			Description: "Array of account data for accounts matching the field predicates (if specified).",
-			Schema: &spec.Schema{
-				SchemaProps: spec.SchemaProps{
-					Type: []string{"object"},
-					Properties: spec.SchemaProperties{
-						"type": spec.Schema{
-							SchemaProps: spec.SchemaProps{
-								Type: []string{"string"},
-							},
-						},
-						"data": spec.Schema{
-							SchemaProps: spec.SchemaProps{
-								Ref: spec.Ref{
-									Ref: accountRef,
-								},
-							},
-						},
-					},
-				},
-			},
+			Schema: objectOf(
+				spec.SchemaProperties{
+					"accounts": *arrayOf(objectOf(
+						spec.SchemaProperties{
+							"type": *typeOf("string"),
+							"data": *accountRef,
+						})),
+				}),
 		},
 	}, nil
 }
@@ -104,16 +89,54 @@ func generateParameters(accountType *model.AccountType) []spec.Parameter {
 	for _, propertyType := range accountType.PropertyTypes {
 		parameters = append(parameters, spec.Parameter{
 			ParamProps: spec.ParamProps{
-				In:   "query",
-				Name: propertyType.Name,
-				Schema: &spec.Schema{
-					SchemaProps: spec.SchemaProps{
-						Type: []string{swaggerType(propertyType.DataType)},
-					},
-				},
+				In:       "query",
+				Name:     propertyType.Name,
+				Schema:   typeOf(swaggerType(propertyType.DataType)),
 				Required: false,
 			},
 		})
 	}
 	return parameters
+}
+
+func typeOf(name string) *spec.Schema {
+	return &spec.Schema{
+		SchemaProps: spec.SchemaProps{
+			Type: []string{name},
+		},
+	}
+}
+
+func arrayOf(schema *spec.Schema) *spec.Schema {
+	return &spec.Schema{
+		SchemaProps: spec.SchemaProps{
+			Type: []string{"array"},
+			Items: &spec.SchemaOrArray{
+				Schema: schema,
+			},
+		},
+	}
+}
+
+func objectOf(properties spec.SchemaProperties) *spec.Schema {
+	return &spec.Schema{
+		SchemaProps: spec.SchemaProps{
+			Type:       []string{"object"},
+			Properties: properties,
+		},
+	}
+}
+
+func refOf(definition string) (*spec.Schema, error) {
+	accountRef, err := jsonreference.New(fmt.Sprintf("#/definitions/%s", definition))
+	if err != nil {
+		return nil, err
+	}
+	return &spec.Schema{
+		SchemaProps: spec.SchemaProps{
+			Ref: spec.Ref{
+				Ref: accountRef,
+			},
+		},
+	}, nil
 }
