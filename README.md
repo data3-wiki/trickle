@@ -6,7 +6,7 @@
 
 [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/data3_wiki.svg?style=social&label=Follow%20%40Data3_Wiki)](https://twitter.com/data3_wiki)
 
-Trickle is an open source no-code framework for spinning up web3 data services painlessly. Focus on dApp logic rather than reinventing the blockchain data plumbling wheel. This project is supported by the [Data3 Wiki](https://www.data3.wiki/).
+Trickle is an open source no-code framework for spinning up web3 data services painlessly. Focus on dApp logic rather than reinventing the blockchain data plumbing wheel. This project is supported by the [Data3 Wiki](https://www.data3.wiki/).
 
 ## Features
 
