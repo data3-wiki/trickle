@@ -8,6 +8,7 @@ import (
 	"github.com/go-openapi/spec"
 )
 
+// Generate a SwaggerV2 spec based on the given program type.
 func Generate(programType *model.ProgramType) (*spec.Swagger, error) {
 	paths := make(map[string]spec.PathItem)
 	for _, accountType := range programType.AccountTypes {
@@ -47,6 +48,7 @@ func Generate(programType *model.ProgramType) (*spec.Swagger, error) {
 	}, nil
 }
 
+// Generate Swagger model definitions based on the program type.
 func generateDefinitions(programType *model.ProgramType) spec.Definitions {
 	defs := make(map[string]spec.Schema)
 	for _, accountType := range programType.AccountTypes {
@@ -63,6 +65,7 @@ func generateDefinitions(programType *model.ProgramType) spec.Definitions {
 	return defs
 }
 
+// Generate Swagger response based on account type.
 func generateResponse(accountType *model.AccountType) (*spec.Response, error) {
 	accountRef, err := refOf(accountType.Name)
 	if err != nil {
@@ -84,6 +87,7 @@ func generateResponse(accountType *model.AccountType) (*spec.Response, error) {
 	}, nil
 }
 
+// Generate Swagger parameters based on account type.
 func generateParameters(accountType *model.AccountType) []spec.Parameter {
 	parameters := []spec.Parameter{}
 	for _, propertyType := range accountType.PropertyTypes {
@@ -99,6 +103,7 @@ func generateParameters(accountType *model.AccountType) []spec.Parameter {
 	return parameters
 }
 
+// Helper function to return a Swagger primitive type.
 func typeOf(name string) *spec.Schema {
 	return &spec.Schema{
 		SchemaProps: spec.SchemaProps{
@@ -107,6 +112,7 @@ func typeOf(name string) *spec.Schema {
 	}
 }
 
+// Helper function to return a Swagger array type.
 func arrayOf(schema *spec.Schema) *spec.Schema {
 	return &spec.Schema{
 		SchemaProps: spec.SchemaProps{
@@ -118,6 +124,7 @@ func arrayOf(schema *spec.Schema) *spec.Schema {
 	}
 }
 
+// Helper function to return a Swagger object type.
 func objectOf(properties spec.SchemaProperties) *spec.Schema {
 	return &spec.Schema{
 		SchemaProps: spec.SchemaProps{
@@ -127,6 +134,7 @@ func objectOf(properties spec.SchemaProperties) *spec.Schema {
 	}
 }
 
+// Helper function to return a Swagger ref.
 func refOf(definition string) (*spec.Schema, error) {
 	accountRef, err := jsonreference.New(fmt.Sprintf("#/definitions/%s", definition))
 	if err != nil {

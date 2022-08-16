@@ -9,22 +9,34 @@ import (
 	"gorm.io/gorm"
 )
 
+// We use this to represent an instance of a dynamically created struct of an account.
+// This is used by Gorm which uses reflection.
 type accountInstance struct {
-	name     string
+	// Type name of the account.
+	name string
+	// Instance of the dynamically created struct.
 	instance interface{}
 }
 
+// Driver that contains any database-specific functionality.
 type Driver interface {
+	// Return gorm dialector.
 	Dialector() gorm.Dialector
+	// Serialize the given value based on the data type.
 	Serialize(dataType model.DataType, value interface{}) interface{}
+	// Deserialize the given value based on the data type.
 	Deserialize(dataType model.DataType, value interface{}) interface{}
 }
 
+// Store of account data.
 type AccountStore struct {
-	db     *gorm.DB
+	// Gorm db instance.
+	db *gorm.DB
+	// Driver to use for database-specific functionality.
 	driver Driver
 }
 
+// Create a new account store with the given driver.
 func NewAccountStore(driver Driver) (*AccountStore, error) {
 	db, err := gorm.Open(driver.Dialector(), &gorm.Config{})
 	if err != nil {
@@ -36,6 +48,7 @@ func NewAccountStore(driver Driver) (*AccountStore, error) {
 	}, nil
 }
 
+// Create instances of structs with fields that are dynamically determined by the accounts propert types.
 func createDynamicStructs(accountTypes []*model.AccountType) []*accountInstance {
 	instances := []*accountInstance{}
 	for _, acc := range accountTypes {
@@ -56,6 +69,7 @@ func createDynamicStructs(accountTypes []*model.AccountType) []*accountInstance 
 	return instances
 }
 
+// Use gorm to create/update schema in underlying database based on the given program type.
 func (st *AccountStore) AutoMigrate(programType *model.ProgramType) error {
 	dynamicStructs := createDynamicStructs(programType.AccountTypes)
 
@@ -69,6 +83,7 @@ func (st *AccountStore) AutoMigrate(programType *model.ProgramType) error {
 	return nil
 }
 
+// Create rows for given account data in database.
 func (st *AccountStore) Create(accounts []*model.Account) error {
 	rowsByAccountType := make(map[string][]map[string]interface{})
 	for _, acc := range accounts {
@@ -87,6 +102,8 @@ func (st *AccountStore) Create(accounts []*model.Account) error {
 	return nil
 }
 
+// Return the accounts matching the given predicates.
+// predicates: Map of property name to value. Accounts will be filtered on the conjunction of equality predicates.
 func (st *AccountStore) Read(accountType *model.AccountType, predicates map[string]interface{}) ([]*model.Account, error) {
 	rows := []map[string]interface{}{}
 	result := st.db.Table(accountType.Name).Where(predicates).Find(&rows)
@@ -110,6 +127,7 @@ func (st *AccountStore) Read(accountType *model.AccountType, predicates map[stri
 	return accounts, nil
 }
 
+// Helper function to loop through the row values and use the driver to serialize them.
 func (st *AccountStore) serialize(accountType *model.AccountType, row map[string]interface{}) (map[string]interface{}, error) {
 	converted := make(map[string]interface{})
 	for _, propertyType := range accountType.PropertyTypes {
@@ -120,6 +138,7 @@ func (st *AccountStore) serialize(accountType *model.AccountType, row map[string
 	return converted, nil
 }
 
+// Helper function to loop through the row values and use the driver to deserialize them.
 func (st *AccountStore) deserialize(accountType *model.AccountType, row map[string]interface{}) (map[string]interface{}, error) {
 	converted := make(map[string]interface{})
 	for _, propertyType := range accountType.PropertyTypes {

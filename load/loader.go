@@ -11,12 +11,17 @@ import (
 	"github.com/dereference-xyz/trickle/store"
 )
 
+// Pulls data from the Solana RPC node, decodes it, then loads it into the account store.
 type Loader struct {
-	solanaNode   node.SolanaNode
+	// Solana RPC node.
+	solanaNode node.SolanaNode
+	// Decoding engine.
 	decodeEngine *decode.V8Engine
+	// Store of account data.
 	accountStore *store.AccountStore
 }
 
+// Create new loader with the given deps.
 func NewLoader(
 	solanaNode node.SolanaNode,
 	decodeEngine *decode.V8Engine,
@@ -28,6 +33,7 @@ func NewLoader(
 	}
 }
 
+// Load data for the given program id and program type, using the specified decoder.
 func (ld *Loader) Load(programType *model.ProgramType, decoder decode.Decoder, programId string) error {
 	accounts, err := ld.solanaNode.GetProgramAccounts(programId)
 	if err != nil {

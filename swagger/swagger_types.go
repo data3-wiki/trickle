@@ -2,8 +2,10 @@ package swagger
 
 import "github.com/dereference-xyz/trickle/model"
 
+// Visitor to case on data type and return the corresponding swagger type.
 type swaggerTypeVisitor struct{}
 
+// Return the swagger type corresponding to the given data type.
 func swaggerType(dataType model.DataType) string {
 	return dataType.Accept(&swaggerTypeVisitor{}).(string)
 }

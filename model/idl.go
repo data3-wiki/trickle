@@ -4,25 +4,35 @@ import (
 	"encoding/json"
 )
 
+// Solana Anchor framework IDL definition.
 type IDL struct {
+	// Account definitions.
 	Accounts []IDLAccount `json:"accounts"`
 }
 
+// IDL account definition.
 type IDLAccount struct {
-	Name string         `json:"name"`
+	// Type name of the account.
+	Name string `json:"name"`
+	// Type definition of the account.
 	Type IDLAccountType `json:"type"`
 }
 
+// Type definition of an account.
 type IDLAccountType struct {
-	Kind   string            `json:"struct"`
+	// Field definitions of the account.
 	Fields []IDLAccountField `json:"fields"`
 }
 
+// Field definition of an account.
 type IDLAccountField struct {
-	Name string      `json:"name"`
+	// Name of the field.
+	Name string `json:"name"`
+	// Type of the field (could be string or json object).
 	Type interface{} `json:"type"`
 }
 
+// Parse IDL json bytes into internally used ProgramType.
 func FromIDL(idlJson []byte) (*ProgramType, error) {
 	var idl IDL
 	err := json.Unmarshal(idlJson, &idl)
@@ -45,6 +55,7 @@ func FromIDL(idlJson []byte) (*ProgramType, error) {
 	return NewProgramType(accountTypes), nil
 }
 
+// Convert IDL field type to internally used DataType.
 func toDataType(rawFieldType interface{}) DataType {
 	var fieldType string
 	switch t := rawFieldType.(type) {

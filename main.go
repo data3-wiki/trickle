@@ -15,6 +15,7 @@ import (
 	"github.com/dereference-xyz/trickle/store/sqlite"
 )
 
+// Main function for HTTP service.
 func main() {
 	configFile := flag.String("config", "", "path to config yaml file")
 	flag.Parse()
@@ -39,10 +40,12 @@ func main() {
 	}
 
 	accountStore, err := store.NewAccountStore(sqlite.NewDriver(cfg.Database.SQLite.File))
+	fmt.Println("Creating or updating database schema...")
 	err = accountStore.AutoMigrate(programType)
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println("Database schema successfully changed.")
 
 	solanaNode := node.NewSolanaGo(cfg.Chains[0].Solana.Node)
 	decodeEngine := decode.NewV8Engine()
@@ -53,14 +56,14 @@ func main() {
 		panic(err)
 	}
 
+	fmt.Println("Loading data...")
 	err = loader.Load(programType, decoder, cfg.Chains[0].Solana.Programs[0].ProgramId)
 	if err != nil {
 		panic(err)
 	}
-
 	fmt.Println("Data loaded successfully.")
-	fmt.Println("Running service...")
 
+	fmt.Println("Running service...")
 	srv := service.NewService(accountStore, programType)
 	err = srv.Router().Run()
 	if err != nil {

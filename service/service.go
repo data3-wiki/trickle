@@ -10,11 +10,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// HTTP service.
 type Service struct {
+	// Store of account data.
 	accountStore *store.AccountStore
-	programType  *model.ProgramType
+	// Definition of program whose data is being served.
+	programType *model.ProgramType
 }
 
+// Create a new service with the given deps.
 func NewService(accountStore *store.AccountStore, programType *model.ProgramType) *Service {
 	return &Service{
 		accountStore: accountStore,
@@ -22,6 +26,7 @@ func NewService(accountStore *store.AccountStore, programType *model.ProgramType
 	}
 }
 
+// Return a gin-gonic router with the endpoints defined.
 func (srv *Service) Router() *gin.Engine {
 	router := gin.Default()
 	api := router.Group("api")
@@ -38,12 +43,14 @@ func (srv *Service) Router() *gin.Engine {
 	return router
 }
 
+// Helper function to return a JSON object containing the given error message.
 func errorToJSON(err error) gin.H {
 	return gin.H{
 		"error": err.Error(),
 	}
 }
 
+// Helper function to return an error to the user.
 func sendErrorResponse(c *gin.Context, err error) {
 	switch err.(type) {
 	case *model.InputValidationError:
@@ -54,6 +61,7 @@ func sendErrorResponse(c *gin.Context, err error) {
 	}
 }
 
+// Endpoint for reading account data (V1).
 func (srv *Service) v1SolanaAccountRead(c *gin.Context) {
 	typeName := c.Param("accountType")
 
@@ -74,7 +82,6 @@ func (srv *Service) v1SolanaAccountRead(c *gin.Context) {
 	for _, propertyType := range accountType.PropertyTypes {
 		value, exists := c.GetQuery(propertyType.Name)
 		if exists {
-			// TODO: Convert based on DataType.
 			predicates[propertyType.Name] = value
 		}
 	}
@@ -90,6 +97,7 @@ func (srv *Service) v1SolanaAccountRead(c *gin.Context) {
 	})
 }
 
+// Endpoint for returning a SwaggerV2 spec.json generated from the program type.
 func (srv *Service) v1SwaggerSpec(c *gin.Context) {
 	spec, err := swagger.Generate(srv.programType)
 	if err != nil {

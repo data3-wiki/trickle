@@ -6,11 +6,16 @@ import (
 	"github.com/dereference-xyz/trickle/model"
 )
 
+// Visitor for decoded value conversion.
 type convertDecodedVisitor struct {
+	// Value to be converted.
 	value interface{}
-	err   error
+	// Store error if one is encountered during conversion. Otherwise remains nil.
+	err error
 }
 
+// Convert value parsed from json string returned by the decoder into a valid
+// value based on the DataType.
 func convertDecodedValue(dataType model.DataType, value interface{}) (interface{}, error) {
 	visitor := &convertDecodedVisitor{value: value}
 	converted := dataType.Accept(visitor)

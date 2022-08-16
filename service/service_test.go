@@ -24,10 +24,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// Some dummy values and test data.
 const dummyProgramId = "0xdeadbeef"
 const testIdlFile = "../test/squads_mpl.json"
 const testGetProgramAccountsFile = "../test/squads_mpl_accounts.json"
 
+// Test dependencies.
 type Deps struct {
 	ctrl         *gomock.Controller
 	programType  *model.ProgramType
@@ -39,10 +41,12 @@ type Deps struct {
 	decoder      decode.Decoder
 }
 
+// Should be invoked at the end of each test that uses gmock (via defer).
 func (deps *Deps) Finish() {
 	deps.ctrl.Finish()
 }
 
+// Load the test idl json file.
 func loadTestIDL(t *testing.T) ([]byte, *model.ProgramType) {
 	idlJson, err := os.ReadFile(testIdlFile)
 	require.NoError(t, err)
@@ -51,6 +55,9 @@ func loadTestIDL(t *testing.T) ([]byte, *model.ProgramType) {
 	return idlJson, programType
 }
 
+// Initialize the given deps struct.
+// The caller is free to set any of the deps depending on the particular unit test's requirements,
+// but is responsible for making sure that deps don't go out-of-sync.
 func initDeps(t *testing.T, deps *Deps) *Deps {
 	deps.ctrl = gomock.NewController(t)
 
@@ -92,6 +99,7 @@ func initDeps(t *testing.T, deps *Deps) *Deps {
 	return deps
 }
 
+// Helper function to parse the json response string of getProgramAccounts.
 func parseGetProgramAccountsResult(t *testing.T, jsonStr string) rpc.GetProgramAccountsResult {
 	var result rpc.GetProgramAccountsResult
 	err := json.Unmarshal([]byte(jsonStr), &result)
@@ -99,6 +107,7 @@ func parseGetProgramAccountsResult(t *testing.T, jsonStr string) rpc.GetProgramA
 	return result
 }
 
+// Helper function to serve a HTTP request to the router under test.
 func serveRequest(t *testing.T, router *gin.Engine, method, url, body string) *httptest.ResponseRecorder {
 	recorder := httptest.NewRecorder()
 	reader := strings.NewReader(body)
@@ -108,6 +117,7 @@ func serveRequest(t *testing.T, router *gin.Engine, method, url, body string) *h
 	return recorder
 }
 
+// Helper function to serve a HTTP GET request.
 func getRequest(t *testing.T, router *gin.Engine, path string, params map[string]interface{}) *httptest.ResponseRecorder {
 	url := &url.URL{
 		Path: "/api" + path,
@@ -120,13 +130,15 @@ func getRequest(t *testing.T, router *gin.Engine, path string, params map[string
 	return serveRequest(t, router, "GET", url.String(), "")
 }
 
+// Helper function to hit the v1/solana/account/read endpoint.
 func v1SolanaAccountRead(t *testing.T, router *gin.Engine, accountType string, predicates map[string]interface{}) *httptest.ResponseRecorder {
 	return getRequest(t, router, fmt.Sprintf("/v1/solana/account/read/%s", accountType), predicates)
 }
 
+// Test loading and reading of account data.
 func TestLoadAndRead(t *testing.T) {
 	deps := initDeps(t, &Deps{})
-	deps.Finish()
+	defer deps.Finish()
 
 	deps.solanaNode.EXPECT().GetProgramAccounts(dummyProgramId).Return(parseGetProgramAccountsResult(t, `
 	[
