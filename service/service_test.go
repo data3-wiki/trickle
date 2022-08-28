@@ -55,6 +55,14 @@ func loadTestIDL(t *testing.T) ([]byte, *model.ProgramType) {
 	return idlJson, programType
 }
 
+// Load data from file for use in unit test.
+// relativePath: Path relative to the test/ directory where test data files are stored.
+func loadTestFile(t *testing.T, relativePath string) string {
+	data, err := os.ReadFile("../test/" + relativePath)
+	require.NoError(t, err)
+	return string(data)
+}
+
 // Initialize the given deps struct.
 // The caller is free to set any of the deps depending on the particular unit test's requirements,
 // but is responsible for making sure that deps don't go out-of-sync.
@@ -135,6 +143,11 @@ func v1SolanaAccountRead(t *testing.T, router *gin.Engine, accountType string, p
 	return getRequest(t, router, fmt.Sprintf("/v1/solana/account/read/%s", accountType), predicates)
 }
 
+// Helper function to get the generated Swagger spec.json of the service.
+func v1SwaggerSpecJson(t *testing.T, router *gin.Engine) *httptest.ResponseRecorder {
+	return getRequest(t, router, "/v1/swagger/spec.json", nil)
+}
+
 // Test loading and reading of account data.
 func TestLoadAndRead(t *testing.T) {
 	deps := initDeps(t, &Deps{})
@@ -178,4 +191,15 @@ func TestLoadAndRead(t *testing.T) {
 		]
 	}
 	`, recorder.Body.String())
+}
+
+// Test returning generated Swagger spec.json for API endpoints.
+func TestSwagger(t *testing.T) {
+	deps := initDeps(t, &Deps{})
+	defer deps.Finish()
+
+	recorder := v1SwaggerSpecJson(t, deps.router)
+	assert.Equal(t, http.StatusOK, recorder.Code)
+	expectedJson := loadTestFile(t, "spec.json")
+	assert.JSONEq(t, expectedJson, recorder.Body.String())
 }

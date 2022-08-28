@@ -1,0 +1,387 @@
+{
+    "swagger": "2.0",
+    "paths": {
+        "/api/v1/solana/account/read/Ms": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "account"
+                ],
+                "parameters": [
+                    {
+                        "name": "threshold",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "authorityIndex",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "transactionIndex",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "msChangeIndex",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "bump",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "createKey",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "allowExternalExecute",
+                        "in": "query",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "keys",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Array of account data for accounts matching the field predicates (if specified).",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "accounts": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "data": {
+                                                "$ref": "#/definitions/Ms"
+                                            },
+                                            "type": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/solana/account/read/MsInstruction": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "account"
+                ],
+                "parameters": [
+                    {
+                        "name": "programId",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "keys",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "data",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "instructionIndex",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "bump",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "executed",
+                        "in": "query",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Array of account data for accounts matching the field predicates (if specified).",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "accounts": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "data": {
+                                                "$ref": "#/definitions/MsInstruction"
+                                            },
+                                            "type": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/solana/account/read/MsTransaction": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "account"
+                ],
+                "parameters": [
+                    {
+                        "name": "creator",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ms",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "transactionIndex",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "authorityIndex",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "authorityBump",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "instructionIndex",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "bump",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "approved",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "rejected",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "cancelled",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "executedIndex",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Array of account data for accounts matching the field predicates (if specified).",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "accounts": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "data": {
+                                                "$ref": "#/definitions/MsTransaction"
+                                            },
+                                            "type": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "Ms": {
+            "properties": {
+                "allowExternalExecute": {
+                    "type": "boolean"
+                },
+                "authorityIndex": {
+                    "type": "integer"
+                },
+                "bump": {
+                    "type": "integer"
+                },
+                "createKey": {
+                    "type": "string"
+                },
+                "keys": {
+                    "type": "string"
+                },
+                "msChangeIndex": {
+                    "type": "integer"
+                },
+                "threshold": {
+                    "type": "integer"
+                },
+                "transactionIndex": {
+                    "type": "integer"
+                }
+            }
+        },
+        "MsInstruction": {
+            "properties": {
+                "bump": {
+                    "type": "integer"
+                },
+                "data": {
+                    "type": "string"
+                },
+                "executed": {
+                    "type": "boolean"
+                },
+                "instructionIndex": {
+                    "type": "integer"
+                },
+                "keys": {
+                    "type": "string"
+                },
+                "programId": {
+                    "type": "string"
+                }
+            }
+        },
+        "MsTransaction": {
+            "properties": {
+                "approved": {
+                    "type": "string"
+                },
+                "authorityBump": {
+                    "type": "integer"
+                },
+                "authorityIndex": {
+                    "type": "integer"
+                },
+                "bump": {
+                    "type": "integer"
+                },
+                "cancelled": {
+                    "type": "string"
+                },
+                "creator": {
+                    "type": "string"
+                },
+                "executedIndex": {
+                    "type": "integer"
+                },
+                "instructionIndex": {
+                    "type": "integer"
+                },
+                "ms": {
+                    "type": "string"
+                },
+                "rejected": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "transactionIndex": {
+                    "type": "integer"
+                }
+            }
+        }
+    }
+}
